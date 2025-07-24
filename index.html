@@ -122,6 +122,21 @@
             }
         }
 
+        /* New: Rainbow color animation for icons - Added !important */
+        @keyframes icon-rainbow-color {
+            0% { color: red !important; }
+            16% { color: orange !important; }
+            33% { color: yellow !important; }
+            50% { color: green !important; }
+            66% { color: blue !important; }
+            83% { color: indigo !important; }
+            100% { color: violet !important; }
+        }
+        .rainbow-icon {
+            animation: icon-rainbow-color 3s linear infinite; /* Apply animation to icon */
+        }
+
+
         /* Rainbow body effect */
         body.rainbow-background {
             background-color: transparent !important;
@@ -137,7 +152,6 @@
             box-sizing: border-box; /* Include padding/border in width/height */
             transition: none !important; /* Disable transitions when flinging */
             cursor: grab; /* Indicate draggable */
-            /* Removed overflow: hidden; here */
         }
 
         .flingable.dragging {
@@ -181,27 +195,27 @@
         <!-- Social Media Buttons -->
         <div class="flex flex-wrap justify-center gap-4 mb-12" id="social-media-buttons-container">
             <a href="#" target="_blank" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 social-button" data-original-bg="bg-purple-600 hover:bg-purple-700">
-                <i class="fab fa-instagram text-xl"></i>
+                <i class="fab fa-instagram text-xl text-white"></i>
                 <span class="hidden sm:inline">Instagram</span>
             </a>
             <a href="https://x.com/amirreu" target="_blank" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 social-button" data-original-bg="bg-gray-700 hover:bg-gray-600">
-                <i class="fab fa-x-twitter text-xl"></i>
+                <i class="fab fa-x-twitter text-xl text-white"></i>
                 <span class="hidden sm:inline">X</span>
             </a>
             <a href="https://twitch.tv/amir" target="_blank" class="bg-purple-800 hover:bg-purple-900 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 social-button" data-original-bg="bg-purple-800 hover:bg-purple-900">
-                <i class="fab fa-twitch text-xl"></i>
+                <i class="fab fa-twitch text-xl text-white"></i>
                 <span class="hidden sm:inline">Twitch</span>
             </a>
             <a href="https://discord.gg/xubPsF8MAs" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 social-button" data-original-bg="bg-indigo-600 hover:bg-indigo-700">
-                <i class="fab fa-discord text-xl"></i>
+                <i class="fab fa-discord text-xl text-white"></i>
                 <span class="hidden sm:inline">Discord</span>
             </a>
             <a href="https://www.youtube.com/@amirreu" target="_blank" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 social-button" data-original-bg="bg-red-600 hover:bg-red-700">
-                <i class="fab fa-youtube text-xl"></i>
+                <i class="fab fa-youtube text-xl text-white"></i>
                 <span class="hidden sm:inline">YouTube</span>
             </a>
-            <a href="https://www.youtube.com/watch?v=xvFZjo5PgG0&" target="_blank" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2" data-original-bg="bg-pink-600 hover:bg-pink-700">
-                <i class="fas fa-fire text-xl"></i>
+            <a href="https://www.youtube.com/watch?v=xvFZjo5PgG0&" target="_blank" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 social-button" data-original-bg="bg-pink-600 hover:bg-pink-700">
+                <i class="fas fa-fire text-xl text-white"></i>
                 <span class="hidden sm:inline">OnlyFans</span>
             </a>
         </div>
@@ -288,6 +302,20 @@
                     if (originalBg) {
                         button.classList.add(...originalBg.split(' '));
                     }
+                    // Restore original text color class to the button
+                    const originalButtonTextColor = button.getAttribute('data-original-text-class');
+                    if (originalButtonTextColor) {
+                        button.classList.add(originalButtonTextColor);
+                    }
+
+                    const icon = button.querySelector('i');
+                    if (icon) {
+                        icon.classList.remove('rainbow-icon'); // Remove rainbow icon class
+                        const originalIconColor = icon.getAttribute('data-original-color-class');
+                        if (originalIconColor) {
+                            icon.classList.add(originalIconColor); // Restore original color class
+                        }
+                    }
                 });
 
                 projectButtons.forEach(button => {
@@ -295,6 +323,20 @@
                     const originalBg = button.getAttribute('data-original-bg');
                     if (originalBg) {
                         button.classList.add(...originalBg.split(' '));
+                    }
+                    // Restore original text color class to the button
+                    const originalButtonTextColor = button.getAttribute('data-original-text-class');
+                    if (originalButtonTextColor) {
+                        button.classList.add(originalButtonTextColor);
+                    }
+
+                    const icon = button.querySelector('i');
+                    if (icon) {
+                        icon.classList.remove('rainbow-icon'); // Remove rainbow icon class
+                        const originalIconColor = icon.getAttribute('data-original-color-class');
+                        if (originalIconColor) {
+                            icon.classList.add(originalIconColor); // Restore original color class
+                        }
                     }
                 });
 
@@ -314,6 +356,24 @@
                     
                     button.classList.add('rainbow-button');
                     button.classList.remove(...originalClasses);
+
+                    // Store and remove text color class from the button itself
+                    const buttonTextColorClass = Array.from(button.classList).find(cls => cls.startsWith('text-'));
+                    if (buttonTextColorClass) {
+                        button.setAttribute('data-original-text-class', buttonTextColorClass);
+                        button.classList.remove(buttonTextColorClass);
+                    }
+
+                    const icon = button.querySelector('i');
+                    if (icon) {
+                        // Store original color class and remove it from the icon
+                        const currentColorClass = Array.from(icon.classList).find(cls => cls.startsWith('text-'));
+                        if (currentColorClass) {
+                            icon.setAttribute('data-original-color-class', currentColorClass);
+                            icon.classList.remove(currentColorClass);
+                        }
+                        icon.classList.add('rainbow-icon'); // Add rainbow icon class
+                    }
                 });
 
                 projectButtons.forEach(button => {
@@ -322,6 +382,24 @@
 
                     button.classList.add('rainbow-button');
                     button.classList.remove(...originalClasses);
+
+                    // Store and remove text color class from the button itself
+                    const buttonTextColorClass = Array.from(button.classList).find(cls => cls.startsWith('text-'));
+                    if (buttonTextColorClass) {
+                        button.setAttribute('data-original-text-class', buttonTextColorClass);
+                        button.classList.remove(buttonTextColorClass);
+                    }
+
+                    const icon = button.querySelector('i');
+                    if (icon) {
+                        // Store original color class and remove it from the icon
+                        const currentColorClass = Array.from(icon.classList).find(cls => cls.startsWith('text-'));
+                        if (currentColorClass) {
+                            icon.setAttribute('data-original-color-class', currentColorClass);
+                            icon.classList.remove(currentColorClass);
+                        }
+                        icon.classList.add('rainbow-icon'); // Add rainbow icon class
+                    }
                 });
 
                 bodyElement.classList.add('rainbow-background');
@@ -472,6 +550,7 @@
                 element.style.top = `${rect.top}px`;
 
                 // Only remove width/max-width Tailwind classes from non-button content blocks
+                // Buttons need their flex and padding for sizing, so we don't remove their width classes.
                 if (element.classList.contains('content-block') && !element.classList.contains('social-button') && !element.classList.contains('project-button')) {
                     const originalClasses = element.className;
                     const cleanedClasses = originalClasses.replace(widthClassesRegex, ' ').trim();
@@ -483,8 +562,6 @@
                     const spanElement = element.querySelector('span');
                     if (spanElement) {
                         spanElement.style.whiteSpace = 'nowrap';
-                        // Add overflow hidden to the button itself to clip text if it still overflows
-                        element.style.overflow = 'hidden';
                     }
                 }
 
