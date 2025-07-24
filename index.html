@@ -54,6 +54,64 @@
                 transform: scale(0);
             }
         }
+
+        /* Secret clickable element */
+        #secret-clickable {
+            position: fixed; /* Fixed position relative to the viewport */
+            bottom: 20px; /* 20px from the bottom */
+            right: 20px; /* 20px from the right */
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 255, 255, 0.05); /* Very subtle white background */
+            border-radius: 8px; /* Slightly rounded corners */
+            cursor: pointer; /* Indicate it's clickable */
+            z-index: 10000; /* Ensure it's on top of other content */
+            transition: background-color 0.3s ease; /* Smooth transition on hover */
+        }
+
+        #secret-clickable:hover {
+            background-color: rgba(255, 255, 255, 0.1); /* Slightly more visible on hover */
+        }
+
+        /* Custom message box styling */
+        #message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #2d3748; /* gray-800 */
+            color: #ffffff;
+            padding: 1.5rem 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+            z-index: 10001;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.25rem;
+            text-align: center;
+        }
+
+        #message-box.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* RGB clickable effect */
+        .rainbow-button {
+            /* Remove original background colors */
+            background-color: transparent !important;
+            background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+            background-size: 200% auto; /* Make the gradient wider than the button */
+            animation: rainbow-animation 2s linear infinite;
+        }
+
+        @keyframes rainbow-animation {
+            to {
+                background-position: 200% center; /* Move the gradient across */
+            }
+        }
     </style>
 </head>
 <body class="font-inter">
@@ -64,7 +122,7 @@
         </h1>
 
         <!-- Social Media Buttons -->
-        <div class="flex flex-wrap justify-center gap-4 mb-12">
+        <div class="flex flex-wrap justify-center gap-4 mb-12" id="social-media-buttons">
             <a href="#" target="_blank" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
                 <i class="fab fa-instagram text-xl"></i>
                 <span class="hidden sm:inline">Instagram</span>
@@ -98,13 +156,12 @@
             <p id="about-me-text" class="text-lg text-gray-300 max-w-2xl mx-auto">
                 Hi, I'm ohamir, 22 years old from the Netherlands and I literally just code! I'm passionate about building barely functional websites. I love bringing ideas to life through washed up code.
             </p>
-            <!-- Removed the Refine About Me button -->
         </div>
 
         <!-- My Projects Section -->
         <div class="text-center w-full mb-12">
             <h2 class="text-3xl sm:text-4xl font-bold text-gray-200 mb-6">My Projects:</h2>
-            <div class="flex flex-col items-center gap-4">
+            <div class="flex flex-col items-center gap-4" id="project-links">
                 <a href="https://lifersrus.com/" target="_blank" class="block bg-gray-700 hover:bg-gray-600 text-white py-3 px-6 rounded-lg shadow-md transition-colors duration-300 w-full max-w-md text-lg font-semibold transform hover:scale-105">
                     Lifers R Us
                 </a>
@@ -123,6 +180,12 @@
         </div>
     </div>
 
+    <!-- Secret Clickable Element -->
+    <div id="secret-clickable"></div>
+
+    <!-- Custom Message Box -->
+    <div id="message-box"></div>
+
     <script>
         // Mouse trail script
         document.addEventListener('mousemove', function(e) {
@@ -139,7 +202,35 @@
             });
         });
 
-        // Removed the Gemini API integration script as the button is no longer present.
+        // Secret Clickable Logic
+        document.getElementById('secret-clickable').addEventListener('click', function() {
+            const messageBox = document.getElementById('message-box');
+            const socialButtons = document.querySelectorAll('#social-media-buttons a');
+            const projectLinks = document.querySelectorAll('#project-links a');
+
+            // Show "RAINBOW MODE ACTIVATED" message
+            messageBox.textContent = "RAINBOW MODE ACTIVATED";
+            messageBox.classList.add('show');
+
+            // Hide message after 2 seconds
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+            }, 2000);
+
+            // Apply rainbow effect to social media buttons
+            socialButtons.forEach(button => {
+                button.classList.add('rainbow-button');
+                // Remove specific background colors to allow gradient to show
+                button.classList.remove('bg-purple-600', 'hover:bg-purple-700', 'bg-gray-700', 'hover:bg-gray-600', 'bg-purple-800', 'hover:bg-purple-900', 'bg-indigo-600', 'hover:bg-indigo-700', 'bg-red-600', 'hover:bg-red-700', 'bg-pink-600', 'hover:bg-pink-700');
+            });
+
+            // Apply rainbow effect to project links
+            projectLinks.forEach(link => {
+                link.classList.add('rainbow-button');
+                // Remove specific background colors
+                link.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+            });
+        });
     </script>
 </body>
 </html>
