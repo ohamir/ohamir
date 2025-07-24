@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ohamir</title>
+    <title>Ohamir's Portfolio</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts - Orbitron for the name, Inter for general text -->
@@ -69,24 +69,24 @@
                 <i class="fab fa-instagram text-xl"></i>
                 <span class="hidden sm:inline">Instagram</span>
             </a>
-            <a href="https://x.com/amirreu" target="https://x.com/amirreu" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
+            <a href="https://x.com/amirreu" target="_blank" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
                 <i class="fab fa-x-twitter text-xl"></i> <!-- Uses fa-x-twitter for the new X icon -->
                 <span class="hidden sm:inline">X</span>
             </a>
-            <a href="https://twitch.tv/amir" target="https://twitch.tv/amir" class="bg-purple-800 hover:bg-purple-900 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
+            <a href="https://twitch.tv/amir" target="_blank" class="bg-purple-800 hover:bg-purple-900 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
                 <i class="fab fa-twitch text-xl"></i>
                 <span class="hidden sm:inline">Twitch</span>
             </a>
-            <a href="https://discord.gg/xubPsF8MAs" target="https://discord.gg/xubPsF8MAs" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
+            <a href="https://discord.gg/xubPsF8MAs" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
                 <i class="fab fa-discord text-xl"></i>
                 <span class="hidden sm:inline">Discord</span>
             </a>
-            <a href="https://www.youtube.com/@amirreu" target="https://www.youtube.com/@amirreu" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
+            <a href="https://www.youtube.com/@amirreu" target="_blank" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
                 <i class="fab fa-youtube text-xl"></i>
                 <span class="hidden sm:inline">YouTube</span>
             </a>
             <!-- New OnlyFans Button -->
-            <a href="https://www.youtube.com/watch?v=xvFZjo5PgG0&" target="https://www.youtube.com/watch?v=xvFZjo5PgG0&" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
+            <a href="https://www.youtube.com/watch?v=xvFZjo5PgG0&" target="_blank" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
                 <i class="fas fa-fire text-xl"></i> <!-- Using a fire icon -->
                 <span class="hidden sm:inline">OnlyFans</span>
             </a>
@@ -95,13 +95,14 @@
         <!-- About Me Section -->
         <div class="text-center w-full mb-12">
             <h2 class="text-3xl sm:text-4xl font-bold text-gray-200 mb-4">About Me</h2>
-            <p class="text-lg text-gray-300 max-w-2xl mx-auto">
+            <p id="about-me-text" class="text-lg text-gray-300 max-w-2xl mx-auto">
                 Hi, I'm ohamir, 22 years old from the Netherlands and I literally just code! I'm passionate about building barely functional websites. I love bringing ideas to life through washed up code.
             </p>
+            <!-- Removed the Refine About Me button -->
         </div>
 
         <!-- My Projects Section -->
-        <div class="text-center w-full">
+        <div class="text-center w-full mb-12">
             <h2 class="text-3xl sm:text-4xl font-bold text-gray-200 mb-6">My Projects:</h2>
             <div class="flex flex-col items-center gap-4">
                 <a href="https://lifersrus.com/" target="_blank" class="block bg-gray-700 hover:bg-gray-600 text-white py-3 px-6 rounded-lg shadow-md transition-colors duration-300 w-full max-w-md text-lg font-semibold transform hover:scale-105">
@@ -112,34 +113,33 @@
                 </a>
             </div>
         </div>
+
+        <!-- Contact Me Section -->
+        <div class="text-center w-full">
+            <h2 class="text-3xl sm:text-4xl font-bold text-gray-200 mb-4">Contact Me</h2>
+            <p class="text-lg text-gray-300 max-w-2xl mx-auto">
+                You can add me on Discord: <span class="font-bold text-blue-400">ohamir</span>
+            </p>
+        </div>
     </div>
 
     <script>
-        // Listen for mouse movement on the entire document
+        // Mouse trail script
         document.addEventListener('mousemove', function(e) {
-            // Create a new div element for each trail dot
             const dot = document.createElement('div');
-            dot.classList.add('mouse-trail-dot'); // Apply base styling
-            
-            // Set initial size (randomized slightly for a more organic look)
-            const size = Math.random() * 8 + 4; // Between 4px and 12px
+            dot.classList.add('mouse-trail-dot');
+            const size = Math.random() * 8 + 4;
             dot.style.width = `${size}px`;
             dot.style.height = `${size}px`;
-
-            // Position the dot at the mouse cursor's location
-            // Subtract half the dot's size to center it on the cursor
             dot.style.left = `${e.clientX - size / 2}px`;
             dot.style.top = `${e.clientY - size / 2}px`;
-
-            // Append the dot to the body
             document.body.appendChild(dot);
-
-            // Remove the dot after its animation completes (1 second)
-            // This prevents the DOM from getting cluttered with too many elements
             dot.addEventListener('animationend', function() {
                 dot.remove();
             });
         });
+
+        // Removed the Gemini API integration script as the button is no longer present.
     </script>
 </body>
 </html>
