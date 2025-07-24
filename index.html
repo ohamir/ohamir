@@ -4,42 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ohamir</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Orbitron for the name, Inter for general text -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome CDN for icons (Updated to a more recent version for fa-x-twitter support) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-        /* Custom font families for Tailwind */
         .font-orbitron {
             font-family: 'Orbitron', sans-serif;
         }
         .font-inter {
             font-family: 'Inter', sans-serif;
         }
-        /* Basic body styling for full height and dark background */
         body {
-            background-color: #1a202c; /* Equivalent to bg-gray-900 */
-            color: #ffffff; /* Equivalent to text-white */
-            min-height: 100vh; /* Ensure full viewport height */
+            background-color: #1a202c;
+            color: #ffffff;
+            min-height: 100vh;
             display: flex;
-            flex-direction: column; /* Changed to column to allow content to stack and scroll */
-            align-items: center; /* Center content horizontally */
-            justify-content: flex-start; /* Align content to the top, allowing it to push down */
-            padding: 1rem; /* Add some padding around the content */
-            box-sizing: border-box; /* Include padding in element's total width and height */
-            cursor: none; /* Hide default cursor to make the trail more prominent */
-            transition: background-color 0.5s ease; /* Smooth transition for background color change */
-            position: relative; /* Needed for absolutely positioned children */
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1rem;
+            box-sizing: border-box;
+            cursor: none;
+            transition: background-color 0.5s ease;
+            position: relative;
         }
 
-        /* Styling for the mouse trail elements */
         .mouse-trail-dot {
             position: absolute;
-            background-color: rgba(66, 153, 225, 0.7); /* blue-400 with opacity */
+            background-color: rgba(66, 153, 225, 0.7);
             border-radius: 50%;
-            pointer-events: none; /* Ensure dots don't interfere with mouse events */
+            pointer-events: none;
             opacity: 0;
             transform: scale(0);
             animation: fadeAndShrink 1s forwards;
@@ -57,39 +51,36 @@
             }
         }
 
-        /* Secret clickable element for Rainbow Mode */
         #secret-clickable {
             position: fixed;
             bottom: 20px;
             right: 20px;
             width: 50px;
             height: 50px;
-            background-color: rgba(255, 255, 255, 0); /* Fully transparent */
+            background-color: rgba(255, 255, 255, 0);
             border-radius: 0;
             cursor: pointer;
             z-index: 10000;
         }
 
-        /* Secret clickable element for Gravity Mode */
         #gravity-trigger {
             position: fixed;
             top: 20px;
             right: 20px;
             width: 50px;
             height: 50px;
-            background-color: rgba(0, 0, 0, 0); /* Fully transparent */
+            background-color: rgba(0, 0, 0, 0);
             border-radius: 0;
             cursor: pointer;
             z-index: 10000;
         }
 
-        /* Custom message box styling */
         #message-box {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: #2d3748; /* gray-800 */
+            background-color: #2d3748;
             color: #ffffff;
             padding: 1.5rem 2.5rem;
             border-radius: 12px;
@@ -108,7 +99,6 @@
             visibility: visible;
         }
 
-        /* RGB clickable effect */
         .rainbow-button {
             background-color: transparent !important;
             background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
@@ -122,7 +112,6 @@
             }
         }
 
-        /* New: Rainbow color animation for icons - Added !important */
         @keyframes icon-rainbow-color {
             0% { color: red !important; }
             16% { color: orange !important; }
@@ -133,11 +122,10 @@
             100% { color: violet !important; }
         }
         .rainbow-icon {
-            animation: icon-rainbow-color 3s linear infinite; /* Apply animation to icon */
+            animation: icon-rainbow-color 3s linear infinite;
         }
 
 
-        /* Rainbow body effect */
         body.rainbow-background {
             background-color: transparent !important;
             background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
@@ -145,54 +133,48 @@
             animation: rainbow-animation 5s linear infinite;
         }
 
-        /* Gravity mode styles for individual content blocks */
         .flingable {
-            position: absolute !important; /* Override normal flow */
-            margin: 0 !important; /* Remove margins */
-            box-sizing: border-box; /* Include padding/border in width/height */
-            transition: none !important; /* Disable transitions when flinging */
-            cursor: grab; /* Indicate draggable */
+            position: absolute !important;
+            margin: 0 !important;
+            box-sizing: border-box;
+            transition: none !important;
+            cursor: grab;
         }
 
         .flingable.dragging {
             cursor: grabbing;
         }
 
-        /* Ensure text inside flingable buttons does not wrap */
         .flingable span {
             white-space: nowrap;
         }
 
-        /* Ensure body's flex properties are removed and overflow is hidden when gravity is active */
         body.gravity-body-active {
             display: block !important;
             align-items: unset !important;
             justify-content: unset !important;
-            overflow: hidden !important; /* Prevent scrolling */
+            overflow: hidden !important;
         }
 
-        /* Container for the main content to keep it centered initially, but allow children to detach */
         .main-container {
-            flex-grow: 1; /* Allows it to take available space in body's flex column */
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             width: 100%;
             max-width: 4xl;
-            margin: auto; /* Center it */
+            margin: auto;
             padding: 1rem;
         }
     </style>
 </head>
 <body class="font-inter">
     <div class="main-container" id="initial-layout-container">
-        <!-- Your Name -->
         <h1 id="ohamir-name" class="font-orbitron text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-blue-400 mb-8 text-center leading-tight content-block">
             ohamir
         </h1>
 
-        <!-- Social Media Buttons -->
         <div class="flex flex-wrap justify-center gap-4 mb-12" id="social-media-buttons-container">
             <a href="#" target="_blank" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 social-button" data-original-bg="bg-purple-600 hover:bg-purple-700">
                 <i class="fab fa-instagram text-xl text-white"></i>
@@ -220,7 +202,6 @@
             </a>
         </div>
 
-        <!-- About Me Section -->
         <div class="text-center w-full mb-12 content-block" id="about-me-section">
             <h2 class="text-3xl sm:text-4xl font-bold text-gray-200 mb-4">About Me</h2>
             <p id="about-me-text" class="text-lg text-gray-300 max-w-2xl mx-auto">
@@ -228,7 +209,6 @@
             </p>
         </div>
 
-        <!-- My Projects Section -->
         <div class="text-center w-full mb-12" id="my-projects-section-container">
             <h2 class="text-3xl sm:text-4xl font-bold text-gray-200 mb-6 content-block">My Projects:</h2>
             <div class="flex flex-col items-center gap-4" id="project-links-container">
@@ -241,7 +221,6 @@
             </div>
         </div>
 
-        <!-- Contact Me Section -->
         <div class="text-center w-full content-block" id="contact-me-section">
             <h2 class="text-3xl sm:text-4xl font-bold text-gray-200 mb-4">Contact Me</h2>
             <p class="text-lg text-gray-300 max-w-2xl mx-auto">
@@ -249,30 +228,24 @@
             </p>
         </div>
 
-        <!-- Footer -->
         <footer class="mt-12 text-center text-gray-500 text-sm content-block" id="footer-section">
             made by ohamir 2025
         </footer>
     </div>
 
-    <!-- Secret Clickable Element for Rainbow Mode (bottom right) -->
     <div id="secret-clickable"></div>
 
-    <!-- Secret Clickable Element for Gravity Mode (top right) -->
     <div id="gravity-trigger"></div>
 
-    <!-- Custom Message Box -->
     <div id="message-box"></div>
 
     <script>
-        // Mouse trail script
         document.addEventListener('mousemove', function(e) {
             const dot = document.createElement('div');
             dot.classList.add('mouse-trail-dot');
             const size = Math.random() * 8 + 4;
             dot.style.width = `${size}px`;
             dot.style.height = `${size}px`;
-            // Use pageX and pageY for document-relative coordinates
             dot.style.left = `${e.pageX - size / 2}px`;
             dot.style.top = `${e.pageY - size / 2}px`;
             document.body.appendChild(dot);
@@ -281,17 +254,15 @@
             });
         });
 
-        // Secret Clickable Logic for Rainbow Mode
         let isRainbowModeActive = false;
 
         document.getElementById('secret-clickable').addEventListener('click', function() {
             const messageBox = document.getElementById('message-box');
-            const socialButtons = document.querySelectorAll('.social-button'); // Target individual buttons
-            const projectButtons = document.querySelectorAll('.project-button'); // Target individual buttons
+            const socialButtons = document.querySelectorAll('.social-button');
+            const projectButtons = document.querySelectorAll('.project-button');
             const bodyElement = document.body;
 
             if (isRainbowModeActive) {
-                // Disable Rainbow Mode
                 messageBox.textContent = "RAINBOW MODE DISABLED";
                 messageBox.classList.add('show');
                 setTimeout(() => { messageBox.classList.remove('show'); }, 2000);
@@ -302,7 +273,6 @@
                     if (originalBg) {
                         button.classList.add(...originalBg.split(' '));
                     }
-                    // Restore original text color class to the button
                     const originalButtonTextColor = button.getAttribute('data-original-text-class');
                     if (originalButtonTextColor) {
                         button.classList.add(originalButtonTextColor);
@@ -310,10 +280,10 @@
 
                     const icon = button.querySelector('i');
                     if (icon) {
-                        icon.classList.remove('rainbow-icon'); // Remove rainbow icon class
+                        icon.classList.remove('rainbow-icon');
                         const originalIconColor = icon.getAttribute('data-original-color-class');
                         if (originalIconColor) {
-                            icon.classList.add(originalIconColor); // Restore original color class
+                            icon.classList.add(originalIconColor);
                         }
                     }
                 });
@@ -324,7 +294,6 @@
                     if (originalBg) {
                         button.classList.add(...originalBg.split(' '));
                     }
-                    // Restore original text color class to the button
                     const originalButtonTextColor = button.getAttribute('data-original-text-class');
                     if (originalButtonTextColor) {
                         button.classList.add(originalButtonTextColor);
@@ -332,10 +301,10 @@
 
                     const icon = button.querySelector('i');
                     if (icon) {
-                        icon.classList.remove('rainbow-icon'); // Remove rainbow icon class
+                        icon.classList.remove('rainbow-icon');
                         const originalIconColor = icon.getAttribute('data-original-color-class');
                         if (originalIconColor) {
-                            icon.classList.add(originalIconColor); // Restore original color class
+                            icon.classList.add(originalIconColor);
                         }
                     }
                 });
@@ -345,7 +314,6 @@
 
                 isRainbowModeActive = false;
             } else {
-                // Enable Rainbow Mode
                 messageBox.textContent = "RAINBOW MODE ACTIVATED";
                 messageBox.classList.add('show');
                 setTimeout(() => { messageBox.classList.remove('show'); }, 2000);
@@ -357,7 +325,6 @@
                     button.classList.add('rainbow-button');
                     button.classList.remove(...originalClasses);
 
-                    // Store and remove text color class from the button itself
                     const buttonTextColorClass = Array.from(button.classList).find(cls => cls.startsWith('text-'));
                     if (buttonTextColorClass) {
                         button.setAttribute('data-original-text-class', buttonTextColorClass);
@@ -366,13 +333,12 @@
 
                     const icon = button.querySelector('i');
                     if (icon) {
-                        // Store original color class and remove it from the icon
                         const currentColorClass = Array.from(icon.classList).find(cls => cls.startsWith('text-'));
                         if (currentColorClass) {
                             icon.setAttribute('data-original-color-class', currentColorClass);
                             icon.classList.remove(currentColorClass);
                         }
-                        icon.classList.add('rainbow-icon'); // Add rainbow icon class
+                        icon.classList.add('rainbow-icon');
                     }
                 });
 
@@ -383,7 +349,6 @@
                     button.classList.add('rainbow-button');
                     button.classList.remove(...originalClasses);
 
-                    // Store and remove text color class from the button itself
                     const buttonTextColorClass = Array.from(button.classList).find(cls => cls.startsWith('text-'));
                     if (buttonTextColorClass) {
                         button.setAttribute('data-original-text-class', buttonTextColorClass);
@@ -392,13 +357,12 @@
 
                     const icon = button.querySelector('i');
                     if (icon) {
-                        // Store original color class and remove it from the icon
                         const currentColorClass = Array.from(icon.classList).find(cls => cls.startsWith('text-'));
                         if (currentColorClass) {
                             icon.setAttribute('data-original-color-class', currentColorClass);
                             icon.classList.remove(currentColorClass);
                         }
-                        icon.classList.add('rainbow-icon'); // Add rainbow icon class
+                        icon.classList.add('rainbow-icon');
                     }
                 });
 
@@ -409,29 +373,24 @@
             }
         });
 
-        // Gravity and Drag-and-Drop Logic
         let isGravityModeActive = false;
         let isDragging = false;
         let currentDraggable = null;
         let offsetX, offsetY;
 
-        // Store properties for each flingable element
-        const flingableElementsData = new Map(); // Map element -> { velocityX, velocityY, animationFrameId }
+        const flingableElementsData = new Map();
 
-        const gravity = 0.5; // Pixels per frame squared
-        const bounceFactor = 0.6; // How much velocity is retained after bounce
-        const friction = 0.98; // Reduce velocity slightly each frame
+        const gravity = 0.5;
+        const bounceFactor = 0.6;
+        const friction = 0.98;
 
         function applyGravity(element) {
-            // Only apply gravity if gravity mode is active
             if (!isGravityModeActive) return;
 
             const elementData = flingableElementsData.get(element);
             if (!elementData) return;
 
-            // If this specific element is currently being dragged, don't apply gravity to it.
             if (isDragging && element === currentDraggable) {
-                // Keep the animation frame alive so it resumes when dragging stops
                 elementData.animationFrameId = requestAnimationFrame(() => applyGravity(element));
                 return;
             }
@@ -440,32 +399,26 @@
             const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight;
             
-            // Calculate floor and wall positions relative to the viewport (fixed boundaries)
             const floorY = viewportHeight - contentRect.height;
             const wallLeft = 0;
             const wallRight = viewportWidth - contentRect.width;
 
-            // Apply gravity to vertical velocity
             elementData.velocityY += gravity;
 
-            // Apply friction
             elementData.velocityY *= friction;
             elementData.velocityX *= friction;
 
             let newTop = contentRect.top + elementData.velocityY;
             let newLeft = contentRect.left + elementData.velocityX;
 
-            // Collision with bottom (floor)
             if (newTop >= floorY) {
                 newTop = floorY;
                 elementData.velocityY *= -bounceFactor;
-                // Stop vertical movement if very small after bounce
                 if (Math.abs(elementData.velocityY) < 1) {
                     elementData.velocityY = 0;
                 }
             }
 
-            // Collision with left/right walls
             if (newLeft <= wallLeft) {
                 newLeft = wallLeft;
                 elementData.velocityX *= -bounceFactor;
@@ -480,15 +433,13 @@
                 }
             }
 
-            // Apply viewport-relative positions
             element.style.top = `${newTop}px`;
             element.style.left = `${newLeft}px`;
 
-            // Continue animation if still moving or not at rest
             if (elementData.velocityY !== 0 || elementData.velocityX !== 0 || newTop < floorY || newLeft <= wallLeft || newLeft >= wallRight) {
                 elementData.animationFrameId = requestAnimationFrame(() => applyGravity(element));
             } else {
-                elementData.animationFrameId = null; // Stop animation when settled
+                elementData.animationFrameId = null;
             }
         }
 
@@ -507,57 +458,44 @@
             messageBox.classList.add('show');
             setTimeout(() => { messageBox.classList.remove('show'); }, 2000);
 
-            // Get all content blocks (h1, about, contact, footer)
             const mainContentBlocks = document.querySelectorAll('.content-block');
-            // Get all individual buttons
             const socialButtons = document.querySelectorAll('.social-button');
             const projectButtons = document.querySelectorAll('.project-button');
 
-            // Combine all elements that should be flingable
             const allFlingableElements = [
                 ...Array.from(mainContentBlocks),
                 ...Array.from(socialButtons),
                 ...Array.from(projectButtons)
             ];
 
-            // Hide the initial layout container
             const initialLayoutContainer = document.getElementById('initial-layout-container');
             if (initialLayoutContainer) {
                 initialLayoutContainer.style.display = 'none';
             }
 
-            // Add class to body to remove its flex properties and prevent scrolling
             document.body.classList.add('gravity-body-active');
 
-            // Regex to match Tailwind width/max-width classes
             const widthClassesRegex = /(^|\s)(w-\S+|max-w-\S+)(\s|$)/g;
 
             allFlingableElements.forEach(element => {
-                // Store original href and disable it
-                if (element.tagName === 'A') { // Check if it's an anchor tag
-                    element.setAttribute('data-original-href', element.href); // Store original href
-                    element.href = 'javascript:void(0);'; // Disable click
-                    // Add an event listener to prevent default on click
+                if (element.tagName === 'A') {
+                    element.setAttribute('data-original-href', element.href);
+                    element.href = 'javascript:void(0);';
                     element.addEventListener('click', preventLinkClick);
                 }
 
-                // Store initial position and dimensions before making absolute
                 const rect = element.getBoundingClientRect();
                 element.style.width = `${rect.width}px`;
                 element.style.height = `${rect.height}px`;
-                // Set initial position relative to the viewport
                 element.style.left = `${rect.left}px`;
                 element.style.top = `${rect.top}px`;
 
-                // Only remove width/max-width Tailwind classes from non-button content blocks
-                // Buttons need their flex and padding for sizing, so we don't remove their width classes.
                 if (element.classList.contains('content-block') && !element.classList.contains('social-button') && !element.classList.contains('project-button')) {
                     const originalClasses = element.className;
                     const cleanedClasses = originalClasses.replace(widthClassesRegex, ' ').trim();
-                    element.className = cleanedClasses; // Apply cleaned classes
+                    element.className = cleanedClasses;
                 }
 
-                // For buttons, ensure content is contained and doesn't wrap
                 if (element.classList.contains('social-button') || element.classList.contains('project-button')) {
                     const spanElement = element.querySelector('span');
                     if (spanElement) {
@@ -565,25 +503,19 @@
                     }
                 }
 
-                // Append the element directly to the body
                 document.body.appendChild(element);
 
-                // Apply flingable class for absolute positioning and styling
                 element.classList.add('flingable');
 
-                // Initialize data for each flingable element
                 flingableElementsData.set(element, { velocityX: 0, velocityY: 0, animationFrameId: null });
 
-                // Start gravity animation for this element
                 flingableElementsData.get(element).animationFrameId = requestAnimationFrame(() => applyGravity(element));
 
-                // Enable drag-and-drop for each flingable element
                 element.addEventListener('mousedown', startDrag);
                 element.addEventListener('touchstart', startDrag, { passive: false });
             });
         });
 
-        // Function to prevent default link click behavior
         function preventLinkClick(e) {
             e.preventDefault();
         }
@@ -600,8 +532,6 @@
                 cancelAnimationFrame(elementData.animationFrameId);
                 elementData.animationFrameId = null;
             }
-            // Do NOT reset velocityY or velocityX here.
-            // When released, gravity should immediately take over based on its current state.
 
             const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
             const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
@@ -632,7 +562,6 @@
             const elementWidth = currentDraggable.offsetWidth;
             const elementHeight = currentDraggable.offsetHeight;
 
-            // Clamp to viewport boundaries
             newLeft = Math.max(0, Math.min(newLeft, viewportWidth - elementWidth));
             newTop = Math.max(0, Math.min(newTop, viewportHeight - elementHeight));
 
@@ -650,11 +579,9 @@
             
             const elementData = flingableElementsData.get(currentDraggable);
             if (elementData) {
-                // Zero out velocities to make it fall straight down from rest
                 elementData.velocityX = 0;
                 elementData.velocityY = 0; 
 
-                // Ensure gravity animation resumes for this element
                 if (isGravityModeActive) {
                     elementData.animationFrameId = requestAnimationFrame(() => applyGravity(currentDraggable));
                 }
