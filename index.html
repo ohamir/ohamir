@@ -24,12 +24,14 @@
             color: #ffffff; /* Equivalent to text-white */
             min-height: 100vh; /* Ensure full viewport height */
             display: flex;
-            align-items: center; /* Center content vertically */
-            justify-content: center; /* Center content horizontally */
+            flex-direction: column; /* Changed to column to allow content to stack and scroll */
+            align-items: center; /* Center content horizontally */
+            justify-content: flex-start; /* Align content to the top, allowing it to push down */
             padding: 1rem; /* Add some padding around the content */
             box-sizing: border-box; /* Include padding in element's total width and height */
-            overflow: hidden; /* Prevent scrollbars from mouse trail elements */
             cursor: none; /* Hide default cursor to make the trail more prominent */
+            transition: background-color 0.5s ease; /* Smooth transition for background color change */
+            position: relative; /* Needed for absolutely positioned children */
         }
 
         /* Styling for the mouse trail elements */
@@ -38,10 +40,10 @@
             background-color: rgba(66, 153, 225, 0.7); /* blue-400 with opacity */
             border-radius: 50%;
             pointer-events: none; /* Ensure dots don't interfere with mouse events */
-            opacity: 0; /* Start invisible */
-            transform: scale(0); /* Start scaled down */
-            animation: fadeAndShrink 1s forwards; /* Animation for fading and shrinking */
-            z-index: 9999; /* Ensure dots are on top */
+            opacity: 0;
+            transform: scale(0);
+            animation: fadeAndShrink 1s forwards;
+            z-index: 9999;
         }
 
         @keyframes fadeAndShrink {
@@ -55,22 +57,30 @@
             }
         }
 
-        /* Secret clickable element */
+        /* Secret clickable element for Rainbow Mode */
         #secret-clickable {
-            position: fixed; /* Fixed position relative to the viewport */
-            bottom: 20px; /* 20px from the bottom */
-            right: 20px; /* 20px from the right */
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
             width: 50px;
             height: 50px;
-            background-color: rgba(255, 255, 255, 0.05); /* Very subtle white background */
-            border-radius: 8px; /* Slightly rounded corners */
-            cursor: pointer; /* Indicate it's clickable */
-            z-index: 10000; /* Ensure it's on top of other content */
-            transition: background-color 0.3s ease; /* Smooth transition on hover */
+            background-color: rgba(255, 255, 255, 0); /* Fully transparent */
+            border-radius: 0;
+            cursor: pointer;
+            z-index: 10000;
         }
 
-        #secret-clickable:hover {
-            background-color: rgba(255, 255, 255, 0.1); /* Slightly more visible on hover */
+        /* Secret clickable element for Gravity Mode */
+        #gravity-trigger {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: rgba(0, 0, 0, 0); /* Fully transparent */
+            border-radius: 0;
+            cursor: pointer;
+            z-index: 10000;
         }
 
         /* Custom message box styling */
@@ -100,58 +110,104 @@
 
         /* RGB clickable effect */
         .rainbow-button {
-            /* Remove original background colors */
             background-color: transparent !important;
             background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
-            background-size: 200% auto; /* Make the gradient wider than the button */
+            background-size: 200% auto;
             animation: rainbow-animation 2s linear infinite;
         }
 
         @keyframes rainbow-animation {
             to {
-                background-position: 200% center; /* Move the gradient across */
+                background-position: 200% center;
             }
+        }
+
+        /* Rainbow body effect */
+        body.rainbow-background {
+            background-color: transparent !important;
+            background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+            background-size: 200% auto;
+            animation: rainbow-animation 5s linear infinite;
+        }
+
+        /* Gravity mode styles for individual content blocks */
+        .flingable {
+            position: absolute !important; /* Override normal flow */
+            margin: 0 !important; /* Remove margins */
+            box-sizing: border-box; /* Include padding/border in width/height */
+            transition: none !important; /* Disable transitions when flinging */
+            cursor: grab; /* Indicate draggable */
+            /* Removed overflow: hidden; here */
+        }
+
+        .flingable.dragging {
+            cursor: grabbing;
+        }
+
+        /* Ensure text inside flingable buttons does not wrap */
+        .flingable span {
+            white-space: nowrap;
+        }
+
+        /* Ensure body's flex properties are removed and overflow is hidden when gravity is active */
+        body.gravity-body-active {
+            display: block !important;
+            align-items: unset !important;
+            justify-content: unset !important;
+            overflow: hidden !important; /* Prevent scrolling */
+        }
+
+        /* Container for the main content to keep it centered initially, but allow children to detach */
+        .main-container {
+            flex-grow: 1; /* Allows it to take available space in body's flex column */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 4xl;
+            margin: auto; /* Center it */
+            padding: 1rem;
         }
     </style>
 </head>
 <body class="font-inter">
-    <div class="flex flex-col items-center justify-center p-8 bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full mx-auto">
+    <div class="main-container" id="initial-layout-container">
         <!-- Your Name -->
-        <h1 class="font-orbitron text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-blue-400 mb-8 text-center leading-tight">
+        <h1 id="ohamir-name" class="font-orbitron text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-blue-400 mb-8 text-center leading-tight content-block">
             ohamir
         </h1>
 
         <!-- Social Media Buttons -->
-        <div class="flex flex-wrap justify-center gap-4 mb-12" id="social-media-buttons">
-            <a href="#" target="_blank" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
+        <div class="flex flex-wrap justify-center gap-4 mb-12" id="social-media-buttons-container">
+            <a href="#" target="_blank" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 social-button" data-original-bg="bg-purple-600 hover:bg-purple-700">
                 <i class="fab fa-instagram text-xl"></i>
                 <span class="hidden sm:inline">Instagram</span>
             </a>
-            <a href="https://x.com/amirreu" target="_blank" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
-                <i class="fab fa-x-twitter text-xl"></i> <!-- Uses fa-x-twitter for the new X icon -->
+            <a href="https://x.com/amirreu" target="_blank" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 social-button" data-original-bg="bg-gray-700 hover:bg-gray-600">
+                <i class="fab fa-x-twitter text-xl"></i>
                 <span class="hidden sm:inline">X</span>
             </a>
-            <a href="https://twitch.tv/amir" target="_blank" class="bg-purple-800 hover:bg-purple-900 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
+            <a href="https://twitch.tv/amir" target="_blank" class="bg-purple-800 hover:bg-purple-900 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 social-button" data-original-bg="bg-purple-800 hover:bg-purple-900">
                 <i class="fab fa-twitch text-xl"></i>
                 <span class="hidden sm:inline">Twitch</span>
             </a>
-            <a href="https://discord.gg/xubPsF8MAs" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
+            <a href="https://discord.gg/xubPsF8MAs" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 social-button" data-original-bg="bg-indigo-600 hover:bg-indigo-700">
                 <i class="fab fa-discord text-xl"></i>
                 <span class="hidden sm:inline">Discord</span>
             </a>
-            <a href="https://www.youtube.com/@amirreu" target="_blank" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
+            <a href="https://www.youtube.com/@amirreu" target="_blank" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 social-button" data-original-bg="bg-red-600 hover:bg-red-700">
                 <i class="fab fa-youtube text-xl"></i>
                 <span class="hidden sm:inline">YouTube</span>
             </a>
-            <!-- New OnlyFans Button -->
-            <a href="https://www.youtube.com/watch?v=xvFZjo5PgG0&" target="_blank" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
-                <i class="fas fa-fire text-xl"></i> <!-- Using a fire icon -->
+            <a href="https://www.youtube.com/watch?v=xvFZjo5PgG0&" target="_blank" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:scale-105 flex items-center justify-center space-x-2" data-original-bg="bg-pink-600 hover:bg-pink-700">
+                <i class="fas fa-fire text-xl"></i>
                 <span class="hidden sm:inline">OnlyFans</span>
             </a>
         </div>
 
         <!-- About Me Section -->
-        <div class="text-center w-full mb-12">
+        <div class="text-center w-full mb-12 content-block" id="about-me-section">
             <h2 class="text-3xl sm:text-4xl font-bold text-gray-200 mb-4">About Me</h2>
             <p id="about-me-text" class="text-lg text-gray-300 max-w-2xl mx-auto">
                 Hi, I'm ohamir, 22 years old from the Netherlands and I literally just code! I'm passionate about building barely functional websites. I love bringing ideas to life through washed up code.
@@ -159,29 +215,37 @@
         </div>
 
         <!-- My Projects Section -->
-        <div class="text-center w-full mb-12">
-            <h2 class="text-3xl sm:text-4xl font-bold text-gray-200 mb-6">My Projects:</h2>
-            <div class="flex flex-col items-center gap-4" id="project-links">
-                <a href="https://lifersrus.com/" target="_blank" class="block bg-gray-700 hover:bg-gray-600 text-white py-3 px-6 rounded-lg shadow-md transition-colors duration-300 w-full max-w-md text-lg font-semibold transform hover:scale-105">
+        <div class="text-center w-full mb-12" id="my-projects-section-container">
+            <h2 class="text-3xl sm:text-4xl font-bold text-gray-200 mb-6 content-block">My Projects:</h2>
+            <div class="flex flex-col items-center gap-4" id="project-links-container">
+                <a href="https://lifersrus.com/" target="_blank" class="block bg-gray-700 hover:bg-gray-600 text-white py-3 px-6 rounded-lg shadow-md transition-colors duration-300 w-full max-w-md text-lg font-semibold transform hover:scale-105 project-button" data-original-bg="bg-gray-700 hover:bg-gray-600">
                     Lifers R Us
                 </a>
-                <a href="https://narahotel.eu/" target="_blank" class="block bg-gray-700 hover:bg-gray-600 text-white py-3 px-6 rounded-lg shadow-md transition-colors duration-300 w-full max-w-md text-lg font-semibold transform hover:scale-105">
+                <a href="https://narahotel.eu/" target="_blank" class="block bg-gray-700 hover:bg-gray-600 text-white py-3 px-6 rounded-lg shadow-md transition-colors duration-300 w-full max-w-md text-lg font-semibold transform hover:scale-105 project-button" data-original-bg="bg-gray-700 hover:bg-gray-600">
                     Nara Hotel
                 </a>
             </div>
         </div>
 
         <!-- Contact Me Section -->
-        <div class="text-center w-full">
+        <div class="text-center w-full content-block" id="contact-me-section">
             <h2 class="text-3xl sm:text-4xl font-bold text-gray-200 mb-4">Contact Me</h2>
             <p class="text-lg text-gray-300 max-w-2xl mx-auto">
                 You can add me on Discord: <span class="font-bold text-blue-400">ohamir</span>
             </p>
         </div>
+
+        <!-- Footer -->
+        <footer class="mt-12 text-center text-gray-500 text-sm content-block" id="footer-section">
+            made by ohamir 2025
+        </footer>
     </div>
 
-    <!-- Secret Clickable Element -->
+    <!-- Secret Clickable Element for Rainbow Mode (bottom right) -->
     <div id="secret-clickable"></div>
+
+    <!-- Secret Clickable Element for Gravity Mode (top right) -->
+    <div id="gravity-trigger"></div>
 
     <!-- Custom Message Box -->
     <div id="message-box"></div>
@@ -194,43 +258,337 @@
             const size = Math.random() * 8 + 4;
             dot.style.width = `${size}px`;
             dot.style.height = `${size}px`;
-            dot.style.left = `${e.clientX - size / 2}px`;
-            dot.style.top = `${e.clientY - size / 2}px`;
+            // Use pageX and pageY for document-relative coordinates
+            dot.style.left = `${e.pageX - size / 2}px`;
+            dot.style.top = `${e.pageY - size / 2}px`;
             document.body.appendChild(dot);
             dot.addEventListener('animationend', function() {
                 dot.remove();
             });
         });
 
-        // Secret Clickable Logic
+        // Secret Clickable Logic for Rainbow Mode
+        let isRainbowModeActive = false;
+
         document.getElementById('secret-clickable').addEventListener('click', function() {
             const messageBox = document.getElementById('message-box');
-            const socialButtons = document.querySelectorAll('#social-media-buttons a');
-            const projectLinks = document.querySelectorAll('#project-links a');
+            const socialButtons = document.querySelectorAll('.social-button'); // Target individual buttons
+            const projectButtons = document.querySelectorAll('.project-button'); // Target individual buttons
+            const bodyElement = document.body;
 
-            // Show "RAINBOW MODE ACTIVATED" message
-            messageBox.textContent = "RAINBOW MODE ACTIVATED";
+            if (isRainbowModeActive) {
+                // Disable Rainbow Mode
+                messageBox.textContent = "RAINBOW MODE DISABLED";
+                messageBox.classList.add('show');
+                setTimeout(() => { messageBox.classList.remove('show'); }, 2000);
+
+                socialButtons.forEach(button => {
+                    button.classList.remove('rainbow-button');
+                    const originalBg = button.getAttribute('data-original-bg');
+                    if (originalBg) {
+                        button.classList.add(...originalBg.split(' '));
+                    }
+                });
+
+                projectButtons.forEach(button => {
+                    button.classList.remove('rainbow-button');
+                    const originalBg = button.getAttribute('data-original-bg');
+                    if (originalBg) {
+                        button.classList.add(...originalBg.split(' '));
+                    }
+                });
+
+                bodyElement.classList.remove('rainbow-background');
+                bodyElement.classList.add('bg-gray-900');
+
+                isRainbowModeActive = false;
+            } else {
+                // Enable Rainbow Mode
+                messageBox.textContent = "RAINBOW MODE ACTIVATED";
+                messageBox.classList.add('show');
+                setTimeout(() => { messageBox.classList.remove('show'); }, 2000);
+
+                socialButtons.forEach(button => {
+                    const originalClasses = Array.from(button.classList).filter(cls => cls.startsWith('bg-') || cls.startsWith('hover:bg-'));
+                    button.setAttribute('data-original-bg', originalClasses.join(' '));
+                    
+                    button.classList.add('rainbow-button');
+                    button.classList.remove(...originalClasses);
+                });
+
+                projectButtons.forEach(button => {
+                    const originalClasses = Array.from(button.classList).filter(cls => cls.startsWith('bg-') || cls.startsWith('hover:bg-'));
+                    button.setAttribute('data-original-bg', originalClasses.join(' '));
+
+                    button.classList.add('rainbow-button');
+                    button.classList.remove(...originalClasses);
+                });
+
+                bodyElement.classList.add('rainbow-background');
+                bodyElement.classList.remove('bg-gray-900');
+
+                isRainbowModeActive = true;
+            }
+        });
+
+        // Gravity and Drag-and-Drop Logic
+        let isGravityModeActive = false;
+        let isDragging = false;
+        let currentDraggable = null;
+        let offsetX, offsetY;
+
+        // Store properties for each flingable element
+        const flingableElementsData = new Map(); // Map element -> { velocityX, velocityY, animationFrameId }
+
+        const gravity = 0.5; // Pixels per frame squared
+        const bounceFactor = 0.6; // How much velocity is retained after bounce
+        const friction = 0.98; // Reduce velocity slightly each frame
+
+        function applyGravity(element) {
+            // Only apply gravity if gravity mode is active
+            if (!isGravityModeActive) return;
+
+            const elementData = flingableElementsData.get(element);
+            if (!elementData) return;
+
+            // If this specific element is currently being dragged, don't apply gravity to it.
+            if (isDragging && element === currentDraggable) {
+                // Keep the animation frame alive so it resumes when dragging stops
+                elementData.animationFrameId = requestAnimationFrame(() => applyGravity(element));
+                return;
+            }
+
+            const contentRect = element.getBoundingClientRect();
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            
+            // Calculate floor and wall positions relative to the viewport (fixed boundaries)
+            const floorY = viewportHeight - contentRect.height;
+            const wallLeft = 0;
+            const wallRight = viewportWidth - contentRect.width;
+
+            // Apply gravity to vertical velocity
+            elementData.velocityY += gravity;
+
+            // Apply friction
+            elementData.velocityY *= friction;
+            elementData.velocityX *= friction;
+
+            let newTop = contentRect.top + elementData.velocityY;
+            let newLeft = contentRect.left + elementData.velocityX;
+
+            // Collision with bottom (floor)
+            if (newTop >= floorY) {
+                newTop = floorY;
+                elementData.velocityY *= -bounceFactor;
+                // Stop vertical movement if very small after bounce
+                if (Math.abs(elementData.velocityY) < 1) {
+                    elementData.velocityY = 0;
+                }
+            }
+
+            // Collision with left/right walls
+            if (newLeft <= wallLeft) {
+                newLeft = wallLeft;
+                elementData.velocityX *= -bounceFactor;
+                if (Math.abs(elementData.velocityX) < 1) {
+                    elementData.velocityX = 0;
+                }
+            } else if (newLeft >= wallRight) {
+                newLeft = wallRight;
+                elementData.velocityX *= -bounceFactor;
+                if (Math.abs(elementData.velocityX) < 1) {
+                    elementData.velocityX = 0;
+                }
+            }
+
+            // Apply viewport-relative positions
+            element.style.top = `${newTop}px`;
+            element.style.left = `${newLeft}px`;
+
+            // Continue animation if still moving or not at rest
+            if (elementData.velocityY !== 0 || elementData.velocityX !== 0 || newTop < floorY || newLeft <= wallLeft || newLeft >= wallRight) {
+                elementData.animationFrameId = requestAnimationFrame(() => applyGravity(element));
+            } else {
+                elementData.animationFrameId = null; // Stop animation when settled
+            }
+        }
+
+        document.getElementById('gravity-trigger').addEventListener('click', function() {
+            if (isGravityModeActive) {
+                const messageBox = document.getElementById('message-box');
+                messageBox.textContent = "GRAVITY MODE IS ALREADY ACTIVE!";
+                messageBox.classList.add('show');
+                setTimeout(() => { messageBox.classList.remove('show'); }, 2000);
+                return;
+            }
+
+            isGravityModeActive = true;
+            const messageBox = document.getElementById('message-box');
+            messageBox.textContent = "GRAVITY MODE ACTIVATED!";
             messageBox.classList.add('show');
+            setTimeout(() => { messageBox.classList.remove('show'); }, 2000);
 
-            // Hide message after 2 seconds
-            setTimeout(() => {
-                messageBox.classList.remove('show');
-            }, 2000);
+            // Get all content blocks (h1, about, contact, footer)
+            const mainContentBlocks = document.querySelectorAll('.content-block');
+            // Get all individual buttons
+            const socialButtons = document.querySelectorAll('.social-button');
+            const projectButtons = document.querySelectorAll('.project-button');
 
-            // Apply rainbow effect to social media buttons
-            socialButtons.forEach(button => {
-                button.classList.add('rainbow-button');
-                // Remove specific background colors to allow gradient to show
-                button.classList.remove('bg-purple-600', 'hover:bg-purple-700', 'bg-gray-700', 'hover:bg-gray-600', 'bg-purple-800', 'hover:bg-purple-900', 'bg-indigo-600', 'hover:bg-indigo-700', 'bg-red-600', 'hover:bg-red-700', 'bg-pink-600', 'hover:bg-pink-700');
-            });
+            // Combine all elements that should be flingable
+            const allFlingableElements = [
+                ...Array.from(mainContentBlocks),
+                ...Array.from(socialButtons),
+                ...Array.from(projectButtons)
+            ];
 
-            // Apply rainbow effect to project links
-            projectLinks.forEach(link => {
-                link.classList.add('rainbow-button');
-                // Remove specific background colors
-                link.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+            // Hide the initial layout container
+            const initialLayoutContainer = document.getElementById('initial-layout-container');
+            if (initialLayoutContainer) {
+                initialLayoutContainer.style.display = 'none';
+            }
+
+            // Add class to body to remove its flex properties and prevent scrolling
+            document.body.classList.add('gravity-body-active');
+
+            // Regex to match Tailwind width/max-width classes
+            const widthClassesRegex = /(^|\s)(w-\S+|max-w-\S+)(\s|$)/g;
+
+            allFlingableElements.forEach(element => {
+                // Store original href and disable it
+                if (element.tagName === 'A') { // Check if it's an anchor tag
+                    element.setAttribute('data-original-href', element.href); // Store original href
+                    element.href = 'javascript:void(0);'; // Disable click
+                    // Add an event listener to prevent default on click
+                    element.addEventListener('click', preventLinkClick);
+                }
+
+                // Store initial position and dimensions before making absolute
+                const rect = element.getBoundingClientRect();
+                element.style.width = `${rect.width}px`;
+                element.style.height = `${rect.height}px`;
+                // Set initial position relative to the viewport
+                element.style.left = `${rect.left}px`;
+                element.style.top = `${rect.top}px`;
+
+                // Only remove width/max-width Tailwind classes from non-button content blocks
+                if (element.classList.contains('content-block') && !element.classList.contains('social-button') && !element.classList.contains('project-button')) {
+                    const originalClasses = element.className;
+                    const cleanedClasses = originalClasses.replace(widthClassesRegex, ' ').trim();
+                    element.className = cleanedClasses; // Apply cleaned classes
+                }
+
+                // For buttons, ensure content is contained and doesn't wrap
+                if (element.classList.contains('social-button') || element.classList.contains('project-button')) {
+                    const spanElement = element.querySelector('span');
+                    if (spanElement) {
+                        spanElement.style.whiteSpace = 'nowrap';
+                        // Add overflow hidden to the button itself to clip text if it still overflows
+                        element.style.overflow = 'hidden';
+                    }
+                }
+
+                // Append the element directly to the body
+                document.body.appendChild(element);
+
+                // Apply flingable class for absolute positioning and styling
+                element.classList.add('flingable');
+
+                // Initialize data for each flingable element
+                flingableElementsData.set(element, { velocityX: 0, velocityY: 0, animationFrameId: null });
+
+                // Start gravity animation for this element
+                flingableElementsData.get(element).animationFrameId = requestAnimationFrame(() => applyGravity(element));
+
+                // Enable drag-and-drop for each flingable element
+                element.addEventListener('mousedown', startDrag);
+                element.addEventListener('touchstart', startDrag, { passive: false });
             });
         });
+
+        // Function to prevent default link click behavior
+        function preventLinkClick(e) {
+            e.preventDefault();
+        }
+
+        function startDrag(e) {
+            if (!isGravityModeActive) return;
+
+            isDragging = true;
+            currentDraggable = e.currentTarget;
+            currentDraggable.classList.add('dragging');
+
+            const elementData = flingableElementsData.get(currentDraggable);
+            if (elementData && elementData.animationFrameId) {
+                cancelAnimationFrame(elementData.animationFrameId);
+                elementData.animationFrameId = null;
+            }
+            // Do NOT reset velocityY or velocityX here.
+            // When released, gravity should immediately take over based on its current state.
+
+            const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+
+            const rect = currentDraggable.getBoundingClientRect();
+            offsetX = clientX - rect.left;
+            offsetY = clientY - rect.top;
+
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', endDrag);
+            document.addEventListener('touchmove', drag, { passive: false });
+            document.addEventListener('touchend', endDrag);
+
+            e.preventDefault();
+        }
+
+        function drag(e) {
+            if (!isDragging || !currentDraggable) return;
+
+            const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+
+            let newLeft = clientX - offsetX;
+            let newTop = clientY - offsetY;
+
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const elementWidth = currentDraggable.offsetWidth;
+            const elementHeight = currentDraggable.offsetHeight;
+
+            // Clamp to viewport boundaries
+            newLeft = Math.max(0, Math.min(newLeft, viewportWidth - elementWidth));
+            newTop = Math.max(0, Math.min(newTop, viewportHeight - elementHeight));
+
+            currentDraggable.style.left = `${newLeft}px`;
+            currentDraggable.style.top = `${newTop}px`;
+
+            e.preventDefault();
+        }
+
+        function endDrag(e) {
+            if (!currentDraggable) return;
+
+            currentDraggable.classList.remove('dragging');
+            isDragging = false;
+            
+            const elementData = flingableElementsData.get(currentDraggable);
+            if (elementData) {
+                // Zero out velocities to make it fall straight down from rest
+                elementData.velocityX = 0;
+                elementData.velocityY = 0; 
+
+                // Ensure gravity animation resumes for this element
+                if (isGravityModeActive) {
+                    elementData.animationFrameId = requestAnimationFrame(() => applyGravity(currentDraggable));
+                }
+            }
+            currentDraggable = null;
+
+            document.removeEventListener('mousemove', drag);
+            document.removeEventListener('mouseup', endDrag);
+            document.removeEventListener('touchmove', drag);
+            document.removeEventListener('touchend', endDrag);
+        }
     </script>
 </body>
 </html>
